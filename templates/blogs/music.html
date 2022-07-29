@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}EhizBlog :: Music{% endblock title %}
+
+{% block content %}
+<div class="container">
+      <div class="header my-4">
+        <h2 class="text-center animate__animated animate__tada"><i class="bi bi-music-note"></i> Music Posts <i class="bi bi-music-note-list"></i></h2>
+      </div>
+	    <div class="row">
+	      <div class="col-md-9">
+	        {% for post in music %}
+            {% if post.audio %}
+            <div class="card card-signin my-4">
+                <div class="card-body">
+                        <div>
+                            <img src="{{ post.user_name.profile.image.url }}" class="rounded-circle" width="30" height="30" alt="">
+                            <b>{{ post.user_name }}</b>
+                        </div>
+                        <img class="card-img-top" src="{{ post.pic.url }}" alt="">
+                        <h2 class="card-title">{{ post.title }}</h2>
+                        <small class="text">{{ post.date_posted }}</small>
+                        <p class="card-text text">{{ post.description|slice:":100" }}</p>
+                    </div>
+                    <audio controls src="{{ post.audio.url }}" type="audio/mpeg" ></audio>
+                    <div class="card-footer ">
+                        <i class="bi bi-hand-thumbs-up"></i>{{post.likes.count}} 
+                        <i class="bi bi-chat-left-text"></i>  {{ post.details.count }}
+                    </div>
+                </div>
+            {% endif %}
+	        {% endfor %}
+	  	   </div>
+         <div class="col-md-3 float-right about">
+          <div class="card my-4">
+                  <h5 class="card-header">About I</h5>
+              <div class="card-body">
+                  <p class="card-text"> Ehiz is a tech enthusiat with an eye for detail and picture perfect finish, he desires to be a key component in the global tech world.  </p>
+                  <div class="d-flex flex-row social-icon justify-content-around">
+                        <a class="nav-link github" href="https://github.com/EhizBishop" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i></a>
+                        <a class="nav-link twitter"  href="https://twitter.com/SoulofMischeif" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i></a>
+                        <a class="nav-link ig" href="#"><i class="bi bi-instagram bi-2x"></i></a>
+                        <a class="nav-link whatsapp" href="http://wa.me/2348052750517" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
+                  </div>
+              </div>
+          </div>
+          </div>
+	    </div>
+      {% comment %} sidebar {% endcomment %}
+      
+        
+	</div>
+
+{% if is_paginated %}
+
+      {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+
+    {% endif %}
+
+{% endblock content %}
+
+{% block jsfiles %}
+<script>
+	$(".like").click(function (e) {
+    var id = this.id;
+    var href = $('.like').find('a').attr('href');
+    e.preventDefault();
+
+    $.ajax({
+        url: href,
+        data: {
+          'likeId': id
+        },
+        success: function(response){
+          if(response.liked){
+            $('#likebtn' + id).html("Unlike");
+            $('#likebtn' + id).css("color", "red")
+          }
+          else{
+            $('#likebtn' + id).html("Like");
+            $('#likebtn' + id).css("color", "green")
+          }
+        }
+      })
+});
+</script>
+{% endblock jsfiles %}

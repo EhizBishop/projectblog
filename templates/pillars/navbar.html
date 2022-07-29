@@ -1,0 +1,56 @@
+{% load static %}
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg  sticky-top" >
+    <div class="container" >
+        <!-- nav logo -->
+      <a class="navbar-brand" href="#"><img src="{% static 'media/boy2.png' %}" alt="ehizBlog-logo">EhizBlog</a>
+        <!-- menu button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+     <!-- navigation -->
+      <div class="collapse navbar-collapse align-items-center px-4 " id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+          <li class="nav-item" >
+             <a class="nav-link home  " href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link music" href="{% url 'music' %}">Music</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link videos" href="{% url 'video' %}">Videos</a>
+          </li>
+        </ul>
+        
+        <!-- search form -->
+        <form class="form-inline my-2 my-lg-0 ml-3" action="{% url 'search_post' %}" method="get">
+          <input name="p" type="text" placeholder="search posts..">
+          <button class="btn btn-outline-success my-2 my-sm-0 ml-4" type="submit"><i class="bi bi-search"></i></button>
+        </form>
+        
+      </div>
+
+      {% comment %} theme switcher {% endcomment %}
+      {% block themeswitch %}     <i onclick="myFunction(this)" id="theme-switcher" class="bi bi-moon-stars-fill"></i>
+      {% endblock themeswitch %}
+      <!-- Sign-In -->
+      <ul class="navbar-nav  person">
+        {% if request.user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Hi  {{request.user.username}}   
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="nav-link sign-in" href="{% url 'logout' %}">logout</a></li>
+              <li><a class="nav-link sign-in" href="{% url 'profile' %}">profile</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link sign-in" href="{% url 'login' %}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+</nav>
+<!-- End of Nav -->

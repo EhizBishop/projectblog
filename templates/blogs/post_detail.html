@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}EhizBlog{% endblock title %}
+
+{% block content %}
+	<div class="container">
+	    <div class="row">
+	      <div class="col-md-8">
+	        <div class="card card-signin my-5">
+	          <div class="card-body">
+	          	<a href="{{ post.user_name.profile.get_absolute_url }}"><img src="{{ post.user_name.profile.image.url }}" class="rounded-circle" width="30" height="30" alt=""></a>
+	          	<a class="text" href="{{ post.user_name.profile.get_absolute_url }}"><b>{{ post.user_name }}</b></a>
+	          	<br><small class="text">Posted on {{ post.date_posted }}</small>
+	          	<br>
+	            <p class="card-text text">{{ post.description }}</p>
+	          </div>
+	          <a href="{{ post.pic.url }}"><img class="card-img-top" src="{{ post.pic.url }}" alt=""></a>
+	          {% if post.audio %}
+                <audio controls src="{{ post.audio.url }}" type="audio/mpeg" download ></audio>
+              {% endif %}
+			  
+	          <div class="card-footer">
+	          	<button class="btn btn-white mr-3 like" id="{{ post.id }}">
+			        {% if is_liked %}
+			            <a href="{% url 'post-like' %}" style="color:red;" id="likebtn{{ post.id }}"> <i class="bi bi-hand-thumbs-down"></i> {{post.likes.count}}</a>
+			        {% else %}
+						<a href="{% url 'post-like' %}" style="color:green;" id="likebtn{{ post.id }}"> <i class="bi bi-hand-thumbs-up"></i>{{post.likes.count}}</a> 			        {% endif %}
+			    </button>
+
+	          	{% if post.user_name == user %}
+				<a style="color:blue mr-3" href="{% url 'post-update' post.id %}"><i class="bi bi-arrow-up-circle"></i></a>
+				<a style="color:red mr-3" href="{% url 'post-delete' post.id %}"><i class="bi bi-trash3"></i></a>
+				{% endif %}
+	          </div>
+	        </div>
+	  	   </div>
+	    </div>
+	    <h4>Comments</h4>
+	    <div class="row">
+	    	<div class="col-md-8">
+	    		{% if post.details.all %}
+	    		<div class="card card-signin my-1">
+	    		{% for detail in post.details.all %}
+	    			<div class="card-body">
+	    				<a href="{{ detail.username.profile.get_absolute_url }}">
+	    					<img src="{{ detail.username.profile.image.url }}" class="rounded-circle" width="30" height="30" alt="">
+	    				</a>
+	          			<a class="text" href="{{ detail.username.profile.get_absolute_url }}"><b>{{ detail.username }}</b></a>
+	          			<small>{{ detail.comment_date }}</small>
+	          			<p class="card-text text">{{ detail.comment }}</p>
+	    			</div>
+	    			<hr class="my-1">
+	    		{% endfor %}
+	    		</div>
+	    		{% else %}
+	    			<p>No comments to show!</p>
+	    		{% endif %}
+	    	</div>
+	    </div>
+		<div class="row">
+	    	<div class="col-md-8">
+	    		<div class="card card-signin my-5">
+	    			<div class="card-body">
+	    				<form class="form-signin" method = "POST">
+	    					{% csrf_token %}
+				            <fieldset class="form-group"><br>
+				                {{ form|crispy }}
+				            </fieldset>
+				            <div class="form-group">
+				                <button class="btn btn-sm btn-primary btn-block text-uppercase" type="submit">Comment</button>
+				            </div>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+	</div>
+{% endblock content %}
+{% block jsfiles %}
+<script>
+	$(".like").click(function (e) {
+    var id = this.id;
+    var href = $('.like').find('a').attr('href');
+    e.preventDefault();
+
+    $.ajax({
+        url: href,
+        data: {
+          'likeId': id
+        },
+        success: function(response){
+          if(response.liked){
+            $('#likebtn' + id).html("Unlike | {{post.likes.count}}");
+            $('#likebtn' + id).css("color", "red")
+          }
+          else{
+            $('#likebtn' + id).html("Like | {{post.likes.count}}");
+            $('#likebtn' + id).css("color", "green")
+          }
+        }
+      })
+});
+</script>
+{% endblock jsfiles %}

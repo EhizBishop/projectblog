@@ -1,0 +1,18 @@
+{% load static %}
+ <!-- Slider main container -->
+ <section id="hero" >
+ 
+    <div class="container-fluid hero " >
+      <div class="container heropost  p-2 text-center">
+        {% for post in posts %}
+        {% if forloop.first %}
+        <img src="{{post.pic.url}}" class="img-fluid"  alt="{{ post.title }}">
+          <div class="caption ">
+            <h2 class="card-title animate__animated animate__rubberBand">{{ post.title }}</h2>
+            <p class="card-text  ">{{ post.user_name }} | {{ post.date_posted }} </p>
+          </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
